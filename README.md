@@ -133,12 +133,10 @@ Com o conceito de **Período Refratário de Filtragem Seletiva** — o momento e
 
 ---
 
-## 📄 Licença
-
-MIT — sinta-se livre para usar, adaptar e compartilhar.
+##  compartilhe.
 
 ---
 
 <div align="center">
-  Feito com 🌸 para quem quer se conhecer melhor
+  Feito por Karina Ribeiro do Vale para quem quer se conhecer melhor
 </div>
