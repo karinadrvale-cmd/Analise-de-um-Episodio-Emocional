@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Episódio Emocional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FAF6EF;--ink:#3A3530;--ink-light:#7A726A;--rose:#F0B8B0;--rose-soft:#FAE8E5;--rose-deep:#D4897E;--yellow:#F5E4A0;--yellow-soft:#FBF5DC;--yellow-deep:#C9A82C;--blue:#B8D4E8;--blue-soft:#E5F0F8;--blue-deep:#5A8FAA;--purple:#C8BCED;--purple-soft:#EDE9F8;--purple-deep:#7A65BB;--orange:#F5C8A0;--orange-soft:#FBF0E5;--orange-deep:#C07840;--green:#B8DEC5;--green-soft:#E5F5EB;--green-deep:#4A9068;--red-soft:#FDEAEA;--red-deep:#C05050}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse at 10% 20%,rgba(240,184,176,.18) 0%,transparent 50%),radial-gradient(ellipse at 90% 80%,rgba(200,188,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(245,228,160,.10) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:100;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;transition:opacity .8s ease,transform .8s ease}
+#intro.hidden{opacity:0;transform:translateY(-20px);pointer-events:none}
+.intro-petals{position:relative;width:80px;height:80px;margin:0 auto 2rem}
+.petal{position:absolute;width:28px;height:28px;border-radius:50% 50% 0 50%;opacity:.75;animation:petalFloat 4s ease-in-out infinite}
+.petal:nth-child(1){background:var(--rose);top:0;left:50%;transform:translateX(-50%);animation-delay:0s}
+.petal:nth-child(2){background:var(--yellow);top:50%;right:0;transform:translateY(-50%) rotate(90deg);animation-delay:.5s}
+.petal:nth-child(3){background:var(--purple);bottom:0;left:50%;transform:translateX(-50%) rotate(180deg);animation-delay:1s}
+.petal:nth-child(4){background:var(--blue);top:50%;left:0;transform:translateY(-50%) rotate(270deg);animation-delay:1.5s}
+.petal-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:var(--orange);border-radius:50%}
+@keyframes petalFloat{0%,100%{opacity:.75}50%{opacity:1}}
+.intro-title{font-family:'Fraunces',serif;font-size:clamp(2rem,5vw,3rem);font-weight:300;color:var(--ink);line-height:1.2;margin-bottom:1rem}
+.intro-title em{font-style:italic;color:var(--rose-deep)}
+.intro-sub{font-size:1rem;color:var(--ink-light);font-weight:300;max-width:360px;line-height:1.6;margin-bottom:2.5rem}
+.intro-note{font-size:.78rem;color:var(--ink-light);letter-spacing:.05em;margin-top:1.5rem;opacity:.6}
+
+/* PROGRESS */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--rose-deep),var(--purple-deep));transition:width .6s ease;z-index:50}
+.step-counter{position:fixed;top:1rem;right:1.5rem;font-size:.75rem;color:var(--ink-light);letter-spacing:.08em;z-index:50;opacity:0;transition:opacity .4s}
+.step-counter.visible{opacity:1}
+
+/* APP */
+#app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:4rem 1.5rem 8rem;display:none}
+.steps-wrapper{position:relative;min-height:400px}
+
+/* STEP TRANSITIONS */
+.step{opacity:0;transform:translateY(40px);pointer-events:none;position:absolute;width:100%;transition:opacity .5s ease,transform .5s ease}
+.step.active{opacity:1;transform:translateY(0);pointer-events:all;position:relative}
+.step.done{opacity:0;transform:translateY(-30px);pointer-events:none;position:absolute;height:0;overflow:hidden}
+.step.back-exit{opacity:0;transform:translateY(30px);position:absolute;height:0;overflow:hidden;pointer-events:none}
+
+/* TYPOGRAPHY */
+.step-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;display:block}
+.step-title{font-family:'Fraunces',serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:300;line-height:1.25;margin-bottom:.6rem;color:var(--ink)}
+.step-title em{font-style:italic;color:var(--rose-deep)}
+.step-desc{font-size:.9rem;color:var(--ink-light);line-height:1.65;margin-bottom:1.6rem;font-weight:300;max-width:480px}
+.field-label{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:.35rem;margin-top:1.4rem;display:block}
+.field-hint{font-size:.82rem;color:var(--ink-light);font-weight:300;line-height:1.55;margin-bottom:.7rem}
+
+/* EYEBROW COLORS */
+.step-1 .step-eyebrow{color:var(--rose-deep)}
+.step-2 .step-eyebrow{color:var(--yellow-deep)}
+.step-3 .step-eyebrow{color:var(--blue-deep)}
+.step-4 .step-eyebrow{color:var(--orange-deep)}
+.step-5 .step-eyebrow{color:var(--purple-deep)}
+.step-6 .step-eyebrow{color:var(--rose-deep)}
+
+/* INPUTS */
+textarea,input[type="text"]{width:100%;background:rgba(255,255,255,.7);border:1.5px solid rgba(0,0,0,.1);border-radius:16px;padding:1rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.93rem;font-weight:300;color:var(--ink);resize:none;outline:none;transition:border-color .25s,box-shadow .25s;line-height:1.65}
+textarea:focus,input:focus{border-color:rgba(0,0,0,.25);box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+textarea::placeholder,input::placeholder{color:rgba(58,53,48,.3);font-style:italic}
+textarea{min-height:100px}
+.char-count{font-size:.7rem;color:var(--ink-light);text-align:right;margin-top:.3rem;opacity:.5}
+.char-warn{color:var(--orange-deep)!important;opacity:1!important;font-weight:500}
+
+/* BUTTONS */
+.btn-row{display:flex;align-items:center;gap:.8rem;margin-top:1.8rem;flex-wrap:wrap}
+.btn-start{background:var(--ink);color:var(--cream);border:none;padding:.85rem 2.5rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;letter-spacing:.03em;transition:all .25s}
+.btn-start:hover{background:#5a3e30;transform:translateY(-1px)}
+.btn-next{display:inline-flex;align-items:center;gap:.5rem;background:var(--ink);color:var(--cream);border:1.5px solid var(--ink);padding:.75rem 1.8rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;letter-spacing:.03em;transition:all .25s}
+.btn-next:hover{background:#5a3e30;border-color:#5a3e30}
+.btn-next svg{transition:transform .2s}
+.btn-next:hover svg{transform:translateX(3px)}
+.btn-back{display:inline-flex;align-items:center;gap:.5rem;background:transparent;color:var(--ink-light);border:1.5px solid rgba(0,0,0,.12);padding:.72rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:400;cursor:pointer;letter-spacing:.03em;transition:all .25s}
+.btn-back:hover{border-color:var(--ink);color:var(--ink)}
+.btn-back svg{transition:transform .2s}
+.btn-back:hover svg{transform:translateX(-3px)}
+.btn-finish{background:var(--rose-deep);border-color:var(--rose-deep)}
+.btn-finish:hover{background:#b5695e;border-color:#b5695e}
+.btn-restart{background:transparent;color:var(--ink-light);border:1px solid rgba(0,0,0,.12);padding:.6rem 1.6rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;transition:all .25s;margin-top:1rem}
+.btn-restart:hover{border-color:var(--ink);color:var(--ink)}
+
+/* PRIMARY EMOTIONS */
+.primary-emotions{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem}
+.primary-chip{padding:.55rem 1.1rem;border-radius:100px;font-size:.88rem;font-weight:500;cursor:pointer;border:2px solid rgba(0,0,0,.1);background:rgba(255,255,255,.7);color:var(--ink-light);transition:all .22s;user-select:none;display:inline-flex;align-items:center;gap:.35rem}
+.primary-chip:hover{border-color:rgba(0,0,0,.2);color:var(--ink)}
+.primary-chip[data-e="Alegria"].sel{background:#C9A82C;color:#fff;border-color:#C9A82C}
+.primary-chip[data-e="Medo"].sel{background:#5A8FAA;color:#fff;border-color:#5A8FAA}
+.primary-chip[data-e="Tristeza"].sel{background:#7A65BB;color:#fff;border-color:#7A65BB}
+.primary-chip[data-e="Raiva"].sel{background:#D4897E;color:#fff;border-color:#D4897E}
+.primary-chip[data-e="Nojo"].sel{background:#4A9068;color:#fff;border-color:#4A9068}
+.primary-chip[data-e="Surpresa"].sel{background:#C07840;color:#fff;border-color:#C07840}
+
+.branch-section{background:rgba(255,255,255,.5);border:1.5px solid rgba(0,0,0,.08);border-radius:18px;padding:1rem 1.2rem;margin-bottom:1rem;animation:fadeSlide .3s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.branch-title{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:.7rem}
+.branch-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.b-chip{padding:.32rem .85rem;border-radius:100px;font-size:.79rem;cursor:pointer;border:1.5px solid rgba(0,0,0,.1);background:transparent;color:var(--ink-light);transition:all .18s;user-select:none}
+.b-chip:hover{border-color:rgba(0,0,0,.22);color:var(--ink)}
+.b-chip.sel{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+/* SLIDER */
+.slider-wrap{margin-top:1.4rem;background:rgba(255,255,255,.5);border:1.5px solid rgba(0,0,0,.08);border-radius:18px;padding:1.1rem 1.4rem}
+.slider-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.8rem}
+.slider-label-text{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light)}
+.slider-val{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:300;color:var(--ink);line-height:1}
+.slider-ends{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ink-light);margin-top:.5rem}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:rgba(0,0,0,.08);border-radius:100px;outline:none;cursor:pointer;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+
+/* ACTION TYPE */
+.action-type-row{display:flex;gap:.8rem;margin-top:.8rem;flex-wrap:wrap}
+.action-card{flex:1;min-width:140px;padding:1rem 1.1rem;border-radius:16px;border:2px solid rgba(0,0,0,.1);background:rgba(255,255,255,.6);cursor:pointer;transition:all .22s;text-align:center}
+.action-card:hover{border-color:rgba(0,0,0,.22)}
+.action-card.sel-con{background:var(--green-soft);border-color:var(--green-deep)}
+.action-card.sel-des{background:var(--red-soft);border-color:var(--red-deep)}
+.action-card-icon{font-size:1.4rem;margin-bottom:.3rem}
+.action-card-title{font-size:.88rem;font-weight:500;color:var(--ink);margin-bottom:.2rem}
+.action-card-hint{font-size:.74rem;color:var(--ink-light);line-height:1.4;font-weight:300}
+
+/* REFLECTION */
+.refl-block{background:rgba(255,255,255,.5);border:1.5px solid var(--purple);border-radius:16px;padding:1rem 1.2rem;margin-bottom:.75rem}
+.refl-q{font-family:'Fraunces',serif;font-style:italic;font-size:.97rem;color:var(--purple-deep);font-weight:300;margin-bottom:.22rem}
+.refl-hint{font-size:.78rem;color:var(--ink-light);line-height:1.5}
+
+/* INSIGHT */
+.insight-deco{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+.insight-line{flex:1;height:1px}
+.insight-line:first-child{background:linear-gradient(90deg,transparent,var(--rose))}
+.insight-line:last-child{background:linear-gradient(90deg,var(--rose),transparent)}
+.insight-star{font-size:1.2rem;color:var(--rose-deep)}
+
+/* COMPLETION */
+#completion{display:none;animation:fadeUp .8s ease}
+#completion.visible{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.compl-header{text-align:center;padding:2rem 0 1.5rem}
+.compl-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:300;color:var(--ink);margin-bottom:.8rem}
+.compl-title em{font-style:italic;color:var(--rose-deep)}
+.compl-sub{font-size:.93rem;color:var(--ink-light);font-weight:300;line-height:1.65;max-width:400px;margin:0 auto 1.5rem}
+.s-card{background:rgba(255,255,255,.7);border:1.5px solid rgba(0,0,0,.07);border-radius:18px;padding:1.1rem 1.3rem;margin-bottom:.65rem;transition:transform .2s}
+.s-card:hover{transform:translateY(-2px)}
+.s-card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-light);margin-bottom:.3rem;font-weight:600}
+.s-card-val{font-size:.9rem;color:var(--ink);line-height:1.55;font-weight:300}
+
+/* FLOWCHART */
+.fc-wrap{margin-top:2.5rem}
+.fc-title{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:300;color:var(--ink);margin-bottom:.3rem}
+.fc-sub{font-size:.82rem;color:var(--ink-light);font-weight:300;margin-bottom:1.2rem}
+.fc-outer{background:rgba(255,255,255,.6);border:1.5px solid rgba(0,0,0,.07);border-radius:22px;padding:1.5rem 1rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fc-scroll{min-width:560px}
+
+/* Stage labels row */
+.fc-labels{display:flex;align-items:center;margin-bottom:.75rem;gap:0}
+.fc-lbl{flex:1;text-align:center;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;padding:.28rem .3rem;border-radius:6px;margin:0 2px}
+.fc-spacer{width:24px;flex-shrink:0}
+
+/* Main diagram row */
+.fc-row{display:flex;align-items:stretch;gap:0}
+.fc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.fc-arr{width:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:rgba(212,137,126,.8);font-size:1rem;align-self:center}
+
+/* Nodes */
+.fc-node{border-radius:11px;padding:.55rem .7rem;text-align:center;width:100%;font-size:.7rem;line-height:1.35;word-break:break-word}
+.fc-nlbl{font-size:.56rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.18rem;opacity:.65}
+.fc-nval{font-size:.7rem;font-weight:300;line-height:1.35;word-break:break-word}
+.fc-circle{border-radius:50%!important;width:82px!important;height:82px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;margin:0 auto!important;padding:.4rem!important}
+
+.n-cond{background:var(--rose-soft);border:1.5px solid var(--rose)}
+.n-evento{background:var(--yellow-soft);border:1.5px solid var(--yellow)}
+.n-base{background:rgba(255,255,255,.75);border:1.5px dashed rgba(0,0,0,.15)}
+.n-gatilho{background:var(--yellow);border:1.5px solid var(--yellow-deep);box-shadow:0 2px 10px rgba(201,168,44,.2)}
+.n-estado{background:var(--orange);border:1.5px solid var(--orange-deep);box-shadow:0 2px 10px rgba(192,120,64,.2)}
+.n-mudfis{background:var(--orange-soft);border:1.5px solid var(--orange)}
+.n-mudpsi{background:var(--orange-soft);border:1.5px solid var(--orange)}
+.n-const{background:var(--green-soft);border:1.5px solid var(--green-deep)}
+.n-dest{background:var(--red-soft);border:1.5px solid #e8a0a0}
+.n-acnone{background:rgba(255,255,255,.5);border:1.5px dashed rgba(0,0,0,.12)}
+.n-post{background:var(--purple-soft);border:1.5px solid var(--purple)}
+
+.fc-vline{width:1.5px;background:rgba(212,137,126,.35);flex-shrink:0;min-height:8px}
+.fc-varr{color:rgba(212,137,126,.7);font-size:.65rem;text-align:center;line-height:1}
+
+/* Period bar */
+.fc-period{margin-top:.9rem;background:rgba(245,228,160,.25);border:1px solid var(--yellow);border-radius:7px;padding:.38rem .8rem;text-align:center;font-size:.62rem;color:var(--yellow-deep);font-weight:600;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar" style="width:0%"></div>
+<div class="step-counter" id="stepCounter"></div>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-petals">
+    <div class="petal"></div><div class="petal"></div>
+    <div class="petal"></div><div class="petal"></div>
+    <div class="petal-center"></div>
+  </div>
+  <h1 class="intro-title">Episódio<br><em>Emocional</em></h1>
+  <p class="intro-sub">Um espaço seguro para explorar o que você sente, compreender seus padrões e encontrar novas perspectivas sobre o que aconteceu.</p>
+  <button class="btn-start" onclick="startJourney()">Começar minha jornada</button>
+  <p class="intro-note">Privado · Apenas para você · Sem julgamentos</p>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="steps-wrapper" id="stepsWrapper">
+
+    <!-- ETAPA 1 · SITUAÇÃO -->
+    <div class="step step-1 active" id="step1">
+      <span class="step-eyebrow">Etapa 1 · Situação</span>
+      <h2 class="step-title">O que aconteceu?</h2>
+      <p class="step-desc">Vamos construir o contexto em duas partes: o estado em que você estava antes, e o que de fato ocorreu.</p>
+
+      <span class="field-label">Condição Anterior</span>
+      <p class="field-hint">Descreve o contexto ou as situações que podem ter influenciado como você entrou nesse episódio. Pode ser algo físico (fome, cansaço), emocional (um dia estressante ou agradável), ou até uma intenção prévia.</p>
+      <textarea id="s1-cond" rows="3" placeholder="Ex: Estava cansada após uma semana intensa, mal havia dormido e ainda tinha muitas tarefas pendentes..." oninput="uchar('s1-cond','cc1',0)"></textarea>
+      <div class="char-count" id="cc1"></div>
+
+      <span class="field-label" style="margin-top:1.5rem">Evento</span>
+      <p class="field-hint">Descreva o que aconteceu de forma objetiva — curto e direto, como um "tweet". Apenas os fatos, sem interpretações.</p>
+      <textarea id="s1-evt" rows="2" maxlength="200" style="min-height:78px" placeholder="Ex: Recebi uma mensagem fria do meu chefe pedindo uma reunião urgente." oninput="uchar('s1-evt','cc2',200)"></textarea>
+      <div class="char-count" id="cc2"></div>
+
+      <div class="btn-row">
+        <button class="btn-next" onclick="goNext(1)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ETAPA 2 · EMOÇÕES -->
+    <div class="step step-2" id="step2">
+      <span class="step-eyebrow">Etapa 2 · Emoções</span>
+      <h2 class="step-title">O que você sentiu?</h2>
+      <p class="step-desc">Comece pela emoção principal. Em seguida, refine com as nuances que mais se aproximam do que você viveu.</p>
+
+      <span class="field-label">Emoção primária</span>
+      <div class="primary-emotions" id="primChips">
+        <div class="primary-chip" data-e="Alegria" onclick="pickPrim(this)">😊 Alegria</div>
+        <div class="primary-chip" data-e="Medo" onclick="pickPrim(this)">😰 Medo</div>
+        <div class="primary-chip" data-e="Tristeza" onclick="pickPrim(this)">😔 Tristeza</div>
+        <div class="primary-chip" data-e="Raiva" onclick="pickPrim(this)">😠 Raiva</div>
+        <div class="primary-chip" data-e="Nojo" onclick="pickPrim(this)">🤢 Nojo</div>
+        <div class="primary-chip" data-e="Surpresa" onclick="pickPrim(this)">😲 Surpresa</div>
+      </div>
+
+      <div id="branchWrap" style="display:none">
+        <span class="field-label" style="margin-top:.2rem" id="branchLbl">Nuances</span>
+        <div class="branch-section">
+          <div class="branch-title" id="branchTitle"></div>
+          <div class="branch-chips" id="branchChips"></div>
+        </div>
+      </div>
+
+      <div class="slider-wrap">
+        <div class="slider-header">
+          <span class="slider-label-text">Intensidade</span>
+          <span class="slider-val" id="sliderVal">5</span>
+        </div>
+        <input type="range" id="s2-int" min="0" max="10" value="5" oninput="updSlider(this)">
+        <div class="slider-ends"><span>Quase nada</span><span>Muito intenso</span></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(2)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 11l-4-4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Voltar
+        </button>
+        <button class="btn-next" onclick="goNext(2)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ETAPA 3 · PENSAMENTOS + CORPO -->
+    <div class="step step-3" id="step3">
+      <span class="step-eyebrow">Etapa 3 · Pensamentos &amp; Corpo</span>
+      <h2 class="step-title">O que passou<br>pela sua mente?</h2>
+      <p class="step-desc">Capture o pensamento automático que surgiu em frações de segundo — e o que aconteceu no seu corpo naquele momento.</p>
+
+      <span class="field-label">Pensamento automático</span>
+      <p class="field-hint">Qual foi a primeira interpretação que você fez da situação? Pode ter sido uma voz interna, uma imagem mental ou uma certeza instantânea.</p>
+      <textarea id="s3-thght" rows="3" placeholder="Ex: Pensei que estava prestes a ser demitida... que tinha feito algo muito errado." oninput="uchar('s3-thght','cc3',0)"></textarea>
+      <div class="char-count" id="cc3"></div>
+
+      <span class="field-label" style="margin-top:1.5rem">Mudanças físicas</span>
+      <p class="field-hint">Descreve as reações do seu corpo durante a emoção (ex: coração acelerado, tensão nos ombros, frio na barriga, respiração curta, calor no rosto).</p>
+      <textarea id="s3-body" rows="3" placeholder="Ex: Senti o coração disparar e um frio na barriga. Minhas mãos ficaram frias e trêmulas." oninput="uchar('s3-body','cc4',0)"></textarea>
+      <div class="char-count" id="cc4"></div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(3)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 11l-4-4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Voltar
+        </button>
+        <button class="btn-next" onclick="goNext(3)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ETAPA 4 · AÇÕES -->
+    <div class="step step-4" id="step4">
+      <span class="step-eyebrow">Etapa 4 · Ações</span>
+      <h2 class="step-title">Como você reagiu?</h2>
+      <p class="step-desc">O que você fez — ou deixou de fazer — em resposta a essa emoção? E como classificaria essa reação?</p>
+
+      <span class="field-label">Descrição da reação</span>
+      <p class="field-hint">Pode ser um comportamento externo (gritar, se afastar, chorar) ou interno (suprimir, ruminar, se fechar).</p>
+      <textarea id="s4-react" rows="3" placeholder="Ex: Fiquei em silêncio, respondi com uma mensagem curta e passei a tarde inteira imaginando o pior cenário." oninput="uchar('s4-react','cc5',0)"></textarea>
+      <div class="char-count" id="cc5"></div>
+
+      <span class="field-label" style="margin-top:1.5rem">Tipo de ação</span>
+      <p class="field-hint">O que você fez foi uma ação construtiva ou destrutiva?</p>
+      <div class="action-type-row">
+        <div class="action-card" id="ac-con" onclick="pickAction('con')">
+          <div class="action-card-icon">🌱</div>
+          <div class="action-card-title">Construtiva</div>
+          <div class="action-card-hint">Ajuda você ou a situação de forma saudável</div>
+        </div>
+        <div class="action-card" id="ac-des" onclick="pickAction('des')">
+          <div class="action-card-icon">🌪️</div>
+          <div class="action-card-title">Destrutiva</div>
+          <div class="action-card-hint">Pode gerar mais conflito, dor ou consequências negativas</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(4)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 11l-4-4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Voltar
+        </button>
+        <button class="btn-next" onclick="goNext(4)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ETAPA 5 · REESTRUTURAÇÃO + CONDIÇÃO POSTERIOR -->
+    <div class="step step-5" id="step5">
+      <span class="step-eyebrow">Etapa 5 · Reestruturação</span>
+      <h2 class="step-title">Um olhar<br><em>diferente</em></h2>
+      <p class="step-desc">Vamos explorar esse pensamento com curiosidade e gentileza — e entender o impacto que as suas ações tiveram.</p>
+
+      <div id="reflWrap" style="margin-bottom:1rem"></div>
+      <textarea id="s5-refr" rows="3" placeholder="Escrevendo isso, percebo que..." oninput="uchar('s5-refr','cc6',0)"></textarea>
+      <div class="char-count" id="cc6"></div>
+
+      <span class="field-label" style="margin-top:1.8rem">Condição Posterior</span>
+      <p class="field-hint">Descreve o resultado ou o impacto das suas ações — pode ser externo (nos outros) ou interno (em você). Essa etapa ajuda a compreender padrões emocionais e aprender com a experiência.</p>
+      <textarea id="s5-post" rows="3" placeholder="Ex: Fiquei de mau humor pelo restante do dia. A reunião acabou sendo sobre um projeto novo — nada do que eu imaginei." oninput="uchar('s5-post','cc7',0)"></textarea>
+      <div class="char-count" id="cc7"></div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(5)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 11l-4-4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Voltar
+        </button>
+        <button class="btn-next" onclick="goNext(5)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ETAPA 6 · INSIGHT -->
+    <div class="step step-6" id="step6">
+      <span class="step-eyebrow">Etapa 6 · Insight</span>
+      <h2 class="step-title">O que você<br><em>leva</em> disso?</h2>
+      <p class="step-desc">Uma frase, uma imagem, uma percepção — algo que ficou desta jornada e que você quer guardar consigo.</p>
+
+      <div class="insight-deco">
+        <div class="insight-line"></div>
+        <span class="insight-star">✦</span>
+        <div class="insight-line"></div>
+      </div>
+
+      <textarea id="s6-ins" rows="4" placeholder="Aprendi que minha reação faz sentido, mas também posso..." oninput="uchar('s6-ins','cc8',0)"></textarea>
+      <div class="char-count" id="cc8"></div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(6)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 11l-4-4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Voltar
+        </button>
+        <button class="btn-next btn-finish" onclick="finish()">
+          Concluir jornada ✦
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /steps-wrapper -->
+
+  <!-- COMPLETION -->
+  <div id="completion">
+    <div class="compl-header">
+      <div class="intro-petals"><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal-center"></div></div>
+      <h2 class="compl-title">Você fez algo<br><em>importante</em> hoje</h2>
+      <p class="compl-sub">Parar, observar e nomear suas emoções é um ato de coragem e autocuidado. Aqui está o registro da sua jornada.</p>
+    </div>
+
+    <div id="summCards"></div>
+
+    <!-- FLOWCHART -->
+    <div class="fc-wrap">
+      <h3 class="fc-title">Linha do tempo do seu episódio</h3>
+      <p class="fc-sub">Visualização do seu episódio emocional — da condição inicial até o resultado.</p>
+      <div class="fc-outer"><div class="fc-scroll" id="fcChart"></div></div>
+    </div>
+
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn-restart" onclick="location.reload()">Iniciar nova jornada</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── DATA ──
+const BRANCHES = {
+  Alegria:  ['Contentamento','Prazer','Alívio','Diversão','Orgulho','Êxtase','Gratidão','Encantamento','Satisfação','Bem-estar','Esperança','Amor'],
+  Medo:     ['Ansiedade','Nervosismo','Preocupação','Apreensão','Insegurança','Pânico','Terror','Alarme','Timidez','Vulnerabilidade'],
+  Tristeza: ['Desânimo','Solidão','Decepção','Melancolia','Desesperança','Luto','Abatimento','Desvalorização','Saudade','Culpa'],
+  Raiva:    ['Irritação','Frustração','Indignação','Ressentimento','Hostilidade','Ódio','Fúria','Revolta','Impaciência','Amargura'],
+  Nojo:     ['Repulsa','Aversão','Desprezo','Desdém','Rejeição','Antipatia','Repugnância'],
+  Surpresa: ['Espanto','Admiração','Deslumbramento','Confusão','Perplexidade','Fascínio']
+};
+
+let st = { prim: null, branches: [], action: null, cur: 1 };
+const TOTAL = 6;
+
+// ── START ──
+function startJourney() {
+  const intro = document.getElementById('intro');
+  intro.classList.add('hidden');
+  setTimeout(() => {
+    intro.style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('stepCounter').classList.add('visible');
+    updProg();
+  }, 800);
+}
+
+function updProg() {
+  const pct = ((st.cur - 1) / TOTAL) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('stepCounter').textContent = st.cur + ' / ' + TOTAL;
+}
+
+// ── NAVIGATION ──
+function goNext(from) {
+  if (from + 1 === 5) buildRefl();
+  const curr = document.getElementById('step' + from);
+  const next = document.getElementById('step' + (from + 1));
+  if (!next) return;
+  curr.classList.remove('active');
+  curr.classList.add('done');
+  setTimeout(() => {
+    next.classList.add('active');
+    st.cur = from + 1;
+    updProg();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 350);
+}
+
+function goBack(from) {
+  if (from <= 1) return;
+  const curr = document.getElementById('step' + from);
+  const prev = document.getElementById('step' + (from - 1));
+  // Hide current
+  curr.classList.remove('active');
+  curr.classList.add('done');
+  // Show previous with reverse animation
+  prev.classList.remove('done');
+  prev.style.opacity = '0';
+  prev.style.transform = 'translateY(-20px)';
+  prev.classList.add('active');
+  // Animate in
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      prev.style.transition = 'opacity .45s ease, transform .45s ease';
+      prev.style.opacity = '1';
+      prev.style.transform = 'translateY(0)';
+    });
+  });
+  setTimeout(() => {
+    prev.style.transition = '';
+    prev.style.opacity = '';
+    prev.style.transform = '';
+    curr.classList.remove('done');
+    curr.style.display = '';
+    // Re-hide current cleanly
+    curr.classList.add('done');
+  }, 500);
+  st.cur = from - 1;
+  updProg();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── EMOTIONS ──
+function pickPrim(el) {
+  document.querySelectorAll('.primary-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  st.prim = el.dataset.e;
+  st.branches = [];
+  // Reset branch selections
+  document.querySelectorAll('.b-chip').forEach(c => c.classList.remove('sel'));
+  renderBranches(st.prim);
+}
+
+function renderBranches(emo) {
+  const list = BRANCHES[emo] || [];
+  document.getElementById('branchTitle').textContent = 'Como você se sentiu dentro de ' + emo + '?';
+  document.getElementById('branchChips').innerHTML = list.map(b =>
+    `<div class="b-chip" onclick="togBranch(this,'${b}')">${b}</div>`
+  ).join('');
+  document.getElementById('branchWrap').style.display = 'block';
+}
+
+function togBranch(el, name) {
+  el.classList.toggle('sel');
+  if (el.classList.contains('sel')) {
+    if (!st.branches.includes(name)) st.branches.push(name);
+  } else {
+    st.branches = st.branches.filter(e => e !== name);
+  }
+}
+
+// ── SLIDER ──
+function updSlider(el) {
+  document.getElementById('sliderVal').textContent = el.value;
+  const pct = (el.value / 10) * 100;
+  el.style.background = `linear-gradient(90deg,var(--yellow-deep) ${pct}%,rgba(0,0,0,.08) ${pct}%)`;
+}
+
+// ── ACTION ──
+function pickAction(type) {
+  st.action = type;
+  document.getElementById('ac-con').className = 'action-card' + (type === 'con' ? ' sel-con' : '');
+  document.getElementById('ac-des').className = 'action-card' + (type === 'des' ? ' sel-des' : '');
+}
+
+// ── CHAR COUNT ──
+function uchar(id, cid, limit) {
+  const el = document.getElementById(id);
+  const cd = document.getElementById(cid);
+  const len = el.value.length;
+  if (limit > 0) {
+    const rem = limit - len;
+    cd.textContent = rem + ' restantes';
+    cd.className = 'char-count' + (rem < 30 ? ' char-warn' : '');
+  } else {
+    cd.textContent = len > 0 ? len + ' caracteres' : '';
+  }
+}
+
+// ── REFLECTIONS ──
+function buildRefl() {
+  const emo = st.prim || '';
+  const container = document.getElementById('reflWrap');
+  const qs = [
+    { q: 'Esse pensamento é 100% verdadeiro?', h: 'Ou há partes que podem ser interpretações, não fatos? Existe alguma evidência que contradiga essa certeza?' },
+    { q: 'Existe outra forma de interpretar essa situação?', h: emo ? `Quando sentimos ${emo.toLowerCase()}, nossa percepção se torna mais estreita. O que você poderia não estar vendo?` : 'Imagine que outra pessoa vivesse exatamente essa situação — o que ela pensaria?' },
+    { q: 'O que você diria a um amigo íntimo passando por isso?', h: 'Com a mesma gentileza e compreensão que você teria com alguém que ama.' }
+  ];
+  container.innerHTML = qs.map(q => `
+    <div class="refl-block">
+      <div class="refl-q">"${q.q}"</div>
+      <div class="refl-hint">${q.h}</div>
+    </div>`).join('');
+}
+
+// ── FINISH ──
+function finish() {
+  document.getElementById('step6').classList.remove('active');
+  document.getElementById('step6').classList.add('done');
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('stepCounter').textContent = '✓ Completo';
+  buildSummary();
+  buildFlowchart();
+  setTimeout(() => {
+    document.getElementById('completion').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 400);
+}
+
+// ── SUMMARY ──
+function buildSummary() {
+  const emoStr = [st.prim, ...st.branches].filter(Boolean).join(', ') || '—';
+  const int = document.getElementById('s2-int').value;
+  const acLbl = st.action === 'con' ? '🌱 Construtiva' : st.action === 'des' ? '🌪️ Destrutiva' : '—';
+  const fields = [
+    { l: 'Condição anterior', v: g('s1-cond'), c: 'var(--rose)' },
+    { l: 'Evento', v: g('s1-evt'), c: 'var(--yellow-deep)' },
+    { l: 'Emoções · Intensidade ' + int + '/10', v: emoStr, c: 'var(--orange)' },
+    { l: 'Mudanças físicas', v: g('s3-body'), c: 'var(--orange-deep)' },
+    { l: 'Pensamento automático', v: g('s3-thght'), c: 'var(--blue-deep)' },
+    { l: 'Reação · ' + acLbl, v: g('s4-react'), c: 'var(--green-deep)' },
+    { l: 'Condição posterior', v: g('s5-post'), c: 'var(--purple-deep)' },
+    { l: 'Nova perspectiva', v: g('s5-refr'), c: 'var(--purple)' },
+    { l: '✦ Insight final', v: g('s6-ins'), c: 'var(--rose-deep)' },
+  ];
+  document.getElementById('summCards').innerHTML = fields.filter(f => f.v).map(f =>
+    `<div class="s-card" style="border-left:3px solid ${f.c}">
+      <div class="s-card-label">${f.l}</div>
+      <div class="s-card-val">${esc(f.v)}</div>
+    </div>`
+  ).join('');
+}
+
+// ── FLOWCHART ──
+function buildFlowchart() {
+  const cond   = trunc(g('s1-cond') || '—', 65);
+  const evt    = trunc(g('s1-evt')  || '—', 65);
+  const prim   = st.prim || '—';
+  const bran   = st.branches.slice(0, 3).join(', ');
+  const int    = document.getElementById('s2-int').value;
+  const mudFis = trunc(g('s3-body')   || '—', 55);
+  const thght  = trunc(g('s3-thght') || '—', 55);
+  const react  = trunc(g('s4-react') || '—', 65);
+  const post   = trunc(g('s5-post')  || '—', 65);
+  const act    = st.action;
+
+  const acClass = act === 'con' ? 'n-const' : act === 'des' ? 'n-dest' : 'n-acnone';
+  const acIcon  = act === 'con' ? '🌱 ' : act === 'des' ? '🌪️ ' : '';
+  const acLbl   = act === 'con' ? 'Construtiva' : act === 'des' ? 'Destrutiva' : 'Ação';
+  const primLabel = bran
+    ? `${prim}<br><span style="opacity:.65;font-size:.62rem">${bran}</span>`
+    : prim;
+
+  document.getElementById('fcChart').innerHTML = `
+  <!-- Stage labels -->
+  <div class="fc-labels">
+    <div class="fc-lbl" style="background:var(--rose-deep)">Etapa 01</div>
+    <div class="fc-spacer"></div>
+    <div class="fc-lbl" style="background:var(--yellow-deep)">Etapa 02</div>
+    <div class="fc-spacer"></div>
+    <div class="fc-lbl" style="background:var(--orange-deep)">Etapa 03</div>
+    <div class="fc-spacer"></div>
+    <div class="fc-lbl" style="background:var(--blue-deep)">Etapa 04</div>
+    <div class="fc-spacer"></div>
+    <div class="fc-lbl" style="background:var(--purple-deep)">Etapa 05</div>
+  </div>
+
+  <!-- Main diagram -->
+  <div class="fc-row">
+
+    <!-- COL 1: Condição Anterior -->
+    <div class="fc-col" style="justify-content:center">
+      <div class="fc-node n-cond">
+        <div class="fc-nlbl">Condição<br>Anterior</div>
+        <div class="fc-nval">${cond}</div>
+      </div>
+    </div>
+
+    <div class="fc-arr">→</div>
+
+    <!-- COL 2: Evento → Gatilho ← Base -->
+    <div class="fc-col">
+      <div class="fc-node n-evento">
+        <div class="fc-nlbl">Evento</div>
+        <div class="fc-nval">${evt}</div>
+      </div>
+      <div class="fc-vline" style="min-height:10px"></div>
+      <div class="fc-varr">↓</div>
+      <div class="fc-node n-gatilho fc-circle">
+        <div class="fc-nlbl" style="font-size:.54rem">Gatilho</div>
+        <div class="fc-nval" style="font-weight:500">${prim}</div>
+      </div>
+      <div class="fc-varr">↑</div>
+      <div class="fc-vline" style="min-height:10px"></div>
+      <div class="fc-node n-base">
+        <div class="fc-nlbl">Base de dados<br>de percepção</div>
+        <div class="fc-nval">${thght}</div>
+      </div>
+    </div>
+
+    <div class="fc-arr">→</div>
+
+    <!-- COL 3: Mud. Físicas → Estado → Mud. Psicol. -->
+    <div class="fc-col">
+      <div class="fc-node n-mudfis">
+        <div class="fc-nlbl">Mudanças<br>Físicas</div>
+        <div class="fc-nval">${mudFis}</div>
+      </div>
+      <div class="fc-vline" style="min-height:10px"></div>
+      <div class="fc-varr">↕</div>
+      <div class="fc-node n-estado fc-circle">
+        <div class="fc-nlbl" style="font-size:.54rem">Estado<br>Emocional</div>
+        <div class="fc-nval" style="font-size:.65rem">${primLabel}</div>
+        <div style="font-size:.6rem;opacity:.7;margin-top:.15rem">${int}/10</div>
+      </div>
+      <div class="fc-varr">↕</div>
+      <div class="fc-vline" style="min-height:10px"></div>
+      <div class="fc-node n-mudpsi">
+        <div class="fc-nlbl">Mudanças<br>Psicológicas</div>
+        <div class="fc-nval">${bran ? esc(bran) : esc(thght)}</div>
+      </div>
+    </div>
+
+    <div class="fc-arr">→</div>
+
+    <!-- COL 4: Ação -->
+    <div class="fc-col" style="justify-content:center">
+      <div class="fc-node ${acClass}">
+        <div class="fc-nlbl">Ações</div>
+        <div class="fc-nval" style="font-weight:500;font-size:.74rem">${acIcon}${acLbl}</div>
+        <div class="fc-nval" style="margin-top:.3rem">${react}</div>
+      </div>
+    </div>
+
+    <div class="fc-arr">→</div>
+
+    <!-- COL 5: Condição Posterior -->
+    <div class="fc-col" style="justify-content:center">
+      <div class="fc-node n-post">
+        <div class="fc-nlbl">Condição<br>Posterior</div>
+        <div class="fc-nval">${post}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fc-period">↔&nbsp; Período de filtragem seletiva · Período refratário &nbsp;↔</div>
+  `;
+}
+
+// ── HELPERS ──
+function g(id) { return (document.getElementById(id)?.value || '').trim(); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function trunc(s, n) { return esc(s.length > n ? s.slice(0, n) + '…' : s); }
+
+// Init slider on load
+window.addEventListener('load', () => { const s = document.getElementById('s2-int'); if(s) updSlider(s); });
+</script>
+</body>
+</html>
